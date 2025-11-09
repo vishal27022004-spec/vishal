@@ -1,0 +1,1664 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Artwork-Enterprise - Premium Paper Manufacturing</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 9999;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(10px);
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 3rem;
+            border-radius: 25px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: slideInModal 0.5s ease;
+            position: relative;
+        }
+
+        @keyframes slideInModal {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 2rem;
+            cursor: pointer;
+            color: #999;
+            transition: color 0.3s;
+            z-index: 10;
+        }
+
+        .close-modal:hover {
+            color: #667eea;
+        }
+
+        .modal h2 {
+            text-align: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 2rem;
+            font-size: 2rem;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 1rem;
+            text-align: center;
+            background: #f0f0f0;
+            border-radius: 15px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .tab.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #eee;
+            border-radius: 10px;
+            font-family: inherit;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 15px rgba(102, 126, 234, 0.2);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .modal-btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .modal-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .modal-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .message {
+            margin-top: 1rem;
+            padding: 1rem;
+            border-radius: 10px;
+            display: none;
+            font-size: 0.9rem;
+        }
+
+        .message.show {
+            display: block;
+        }
+
+        .message.error {
+            background: #fee;
+            border-left: 4px solid #f44;
+            color: #c33;
+        }
+
+        .message.success {
+            background: #efe;
+            border-left: 4px solid #4a4;
+            color: #363;
+        }
+
+        .user-badge {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-name {
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .logout-btn-small {
+            padding: 0.5rem 1rem;
+            background: linear-gradient(135deg, #f5576c 0%, #fa709a 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn-small:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(245, 87, 108, 0.4);
+        }
+
+        /* Navigation */
+        nav {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 5px 30px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+
+        nav.scrolled {
+            padding: 0.5rem 0;
+            box-shadow: 0 5px 40px rgba(0,0,0,0.15);
+        }
+
+        nav .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        nav .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientShift 3s ease infinite;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { filter: hue-rotate(0deg); }
+            50% { filter: hue-rotate(20deg); }
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 2.5rem;
+            align-items: center;
+        }
+
+        nav a {
+            color: #333;
+            text-decoration: none;
+            font-weight: 600;
+            position: relative;
+            transition: color 0.3s;
+            cursor: pointer;
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            transition: width 0.3s ease;
+            border-radius: 2px;
+        }
+
+        nav a:hover {
+            color: #667eea;
+        }
+
+        nav a:hover::after {
+            width: 100%;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            color: white;
+            padding: 180px 20px 120px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: moveBackground 20s linear infinite;
+        }
+
+        @keyframes moveBackground {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(50px, 50px); }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1.5rem;
+            animation: fadeInDown 1s ease;
+            text-shadow: 2px 2px 20px rgba(0,0,0,0.2);
+        }
+
+        .hero p {
+            font-size: 1.4rem;
+            margin-bottom: 2.5rem;
+            animation: fadeInUp 1s ease 0.2s backwards;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            animation: fadeInUp 1s ease 0.4s backwards;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 15px 40px;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background: white;
+            color: #667eea;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: white;
+            border: 2px solid white;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        }
+
+        /* Floating Animation */
+        .floating {
+            animation: floating 3s ease-in-out infinite;
+        }
+
+        @keyframes floating {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Section Styles */
+        section {
+            padding: 100px 20px;
+            position: relative;
+        }
+
+        section h2 {
+            text-align: center;
+            font-size: 3rem;
+            margin-bottom: 4rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: fadeIn 1s ease;
+        }
+
+        .scroll-reveal {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 0.8s ease;
+        }
+
+        .scroll-reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* About Section */
+        #about {
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+        }
+
+        .about-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .about-image {
+            width: 100%;
+            height: 450px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 5rem;
+            color: white;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+            transition: transform 0.5s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .about-image::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+            transform: rotate(45deg);
+            animation: shine 3s infinite;
+        }
+
+        @keyframes shine {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+
+        .about-image:hover {
+            transform: scale(1.05) rotate(2deg);
+        }
+
+        .about-text h3 {
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            color: #333;
+        }
+
+        .about-text p {
+            font-size: 1.1rem;
+            color: #555;
+            margin-bottom: 1.5rem;
+            line-height: 1.8;
+        }
+
+        /* Products Section */
+        #products {
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2.5rem;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: 25px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            transition: all 0.5s ease;
+            cursor: pointer;
+        }
+
+        .product-card:hover {
+            transform: translateY(-15px) scale(1.03);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+        }
+
+        .product-image {
+            width: 100%;
+            height: 220px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .product-card:nth-child(1) .product-image { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .product-card:nth-child(2) .product-image { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+        .product-card:nth-child(3) .product-image { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+        .product-card:nth-child(4) .product-image { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
+        .product-card:nth-child(5) .product-image { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); }
+        .product-card:nth-child(6) .product-image { background: linear-gradient(135deg, #30cfd0 0%, #330867 100%); }
+
+        .product-image::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .product-card:hover .product-image::after {
+            left: 100%;
+        }
+
+        .product-content {
+            padding: 2rem;
+        }
+
+        .product-content h3 {
+            margin-bottom: 1rem;
+            color: #333;
+            font-size: 1.5rem;
+        }
+
+        .product-content p {
+            color: #666;
+            line-height: 1.7;
+        }
+
+        /* Services Section */
+        #services {
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2.5rem;
+        }
+
+        .service-card {
+            text-align: center;
+            padding: 3rem 2rem;
+            background: white;
+            border-radius: 25px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            transition: all 0.5s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .service-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            transition: left 0.5s ease;
+            z-index: 0;
+        }
+
+        .service-card:hover::before {
+            left: 0;
+        }
+
+        .service-card:hover {
+            transform: translateY(-10px);
+            color: white;
+        }
+
+        .service-card:hover h3,
+        .service-card:hover p {
+            color: white;
+            position: relative;
+            z-index: 1;
+        }
+
+        .service-icon {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            margin: 0 auto 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: white;
+            position: relative;
+            z-index: 1;
+            transition: all 0.5s ease;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .service-card:hover .service-icon {
+            background: white;
+            transform: rotateY(360deg) scale(1.1);
+        }
+
+        .service-card h3 {
+            position: relative;
+            z-index: 1;
+            margin-bottom: 1rem;
+            color: #333;
+            transition: color 0.5s;
+        }
+
+        .service-card p {
+            position: relative;
+            z-index: 1;
+            color: #666;
+            transition: color 0.5s;
+        }
+
+        /* Statistics Section */
+        .stats {
+            background: linear-gradient(135deg, #ff6b6b 0%, #feca57 50%, #48dbfb 100%);
+            color: white;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stats::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="rgba(255,255,255,0.1)" d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,112C672,96,768,96,864,112C960,128,1056,160,1152,160C1248,160,1344,128,1392,112L1440,96L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>') no-repeat bottom;
+            background-size: cover;
+            opacity: 0.5;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .stat-item {
+            padding: 2rem;
+            border-radius: 20px;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            transition: all 0.5s ease;
+        }
+
+        .stat-item:hover {
+            transform: scale(1.1);
+            background: rgba(255,255,255,0.2);
+        }
+
+        .stat-item h3 {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            animation: countUp 2s ease;
+        }
+
+        @keyframes countUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Contact Section */
+        #contact {
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+        }
+
+        .contact-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+        }
+
+        .contact-form {
+            background: white;
+            padding: 3rem;
+            border-radius: 25px;
+            box-shadow: 0 15px 50px rgba(0,0,0,0.1);
+        }
+
+        .contact-form input,
+        .contact-form textarea {
+            width: 100%;
+            padding: 15px 20px;
+            margin-bottom: 1.5rem;
+            border: 2px solid #eee;
+            border-radius: 15px;
+            font-family: inherit;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+
+        .contact-form input:focus,
+        .contact-form textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 20px rgba(102, 126, 234, 0.2);
+            transform: scale(1.02);
+        }
+
+        .contact-form button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .contact-form button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .contact-form button:hover::before {
+            width: 400px;
+            height: 400px;
+        }
+
+        .contact-form button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .contact-info {
+            padding: 3rem;
+            background: white;
+            border-radius: 25px;
+            box-shadow: 0 15px 50px rgba(0,0,0,0.1);
+        }
+
+        .contact-info h3 {
+            margin-bottom: 2rem;
+            color: #333;
+            font-size: 2rem;
+        }
+
+        .contact-item {
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            padding: 1.5rem;
+            border-radius: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .contact-item:hover {
+            background: #f8f9fa;
+            transform: translateX(10px);
+        }
+
+        .contact-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            flex-shrink: 0;
+            transition: all 0.3s ease;
+        }
+
+        .contact-item:hover .contact-icon {
+            transform: rotate(360deg) scale(1.1);
+        }
+
+        /* Footer */
+        footer {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-align: center;
+            padding: 3rem 0;
+        }
+
+        footer p {
+            margin-bottom: 0.5rem;
+        }
+
+        /* Scroll to Top Button */
+        .scroll-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 999;
+        }
+
+        .scroll-top.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .scroll-top:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+        }
+
+        /* Animations */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            nav ul {
+                display: none;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero-buttons {
+                flex-direction: column;
+            }
+
+            .about-content,
+            .contact-content {
+                grid-template-columns: 1fr;
+            }
+
+            section h2 {
+                font-size: 2rem;
+            }
+
+            .modal-content {
+                padding: 2rem 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="container">
+            <div class="logo">📄 Artwork-Enterprise</div>
+            <ul>
+                <li><a href="#home">Home</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#products">Products</a></li>
+                <li><a href="#services">Services</a></li>
+                <li><a href="#contact">Contact</a></li>
+                <li id="loginNavItem"><a onclick="openLoginModal()">Login</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="hero-content">
+            <h1 class="floating">Leading Paper Manufacturing Excellence</h1>
+            <p>Sustainable, High-Quality Paper Products Since 2000</p>
+            <div class="hero-buttons">
+                <a href="#products" class="btn btn-primary">Explore Products</a>
+                <a href="#contact" class="btn btn-secondary">Get in Touch</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about">
+        <div class="container">
+            <h2 class="scroll-reveal">About Our Factory</h2>
+            <div class="about-content">
+                <div class="about-image scroll-reveal">🏭</div>
+                <div class="about-text scroll-reveal">
+                    <h3>24+ Years of Excellence</h3>
+                    <p>Artwork-Enterprise has been at the forefront of paper manufacturing innovation for over two decades. We combine traditional craftsmanship with modern technology to deliver exceptional quality products.</p>
+                    <p>Our state-of-the-art facility processes over 500 tons of paper daily, serving clients with eco-friendly solutions. We're committed to sustainable practices and environmental responsibility in every step of our production process.</p>
+                    <p>With ISO 9001 and FSC certifications, we ensure the highest standards in quality and environmental stewardship.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Products Section -->
+    <section id="products">
+        <div class="container">
+            <h2 class="scroll-reveal">Our Products</h2>
+            <div class="products-grid">
+                <div class="product-card scroll-reveal">
+                    <div class="product-image">📄</div>
+                    <div class="product-content">
+                        <h3>Premium Office Paper</h3>
+                        <p>High-quality printing and copying paper. Available in A4, A3, and custom sizes. Perfect for professional documents.</p>
+                    </div>
+                </div>
+                <div class="product-card scroll-reveal">
+                    <div class="product-image">📦</div>
+                    <div class="product-content">
+                        <h3>Packaging Materials</h3>
+                        <p>Durable corrugated boxes and kraft paper. Ideal for shipping and storage with excellent strength.</p>
+                    </div>
+                </div>
+                <div class="product-card scroll-reveal">
+                    <div class="product-image">📰</div>
+                    <div class="product-content">
+                        <h3>Newsprint Paper</h3>
+                        <p>Cost-effective newsprint for newspapers and magazines. High opacity and excellent printability.</p>
+                    </div>
+                </div>
+                <div class="product-card scroll-reveal">
+                    <div class="product-image">🧻</div>
+                    <div class="product-content">
+                        <h3>Tissue Products</h3>
+                        <p>Soft and absorbent tissue paper for household and commercial use. Premium quality guaranteed.</p>
+                    </div>
+                </div>
+                <div class="product-card scroll-reveal">
+                    <div class="product-image">🎨</div>
+                    <div class="product-content">
+                        <h3>Specialty Paper</h3>
+                        <p>Custom specialty papers for art, design, and industrial applications. Made to your specifications.</p>
+                    </div>
+                </div>
+                <div class="product-card scroll-reveal">
+                    <div class="product-image">♻️</div>
+                    <div class="product-content">
+                        <h3>Recycled Paper</h3>
+                        <p>Environmentally friendly recycled paper products. Sustainable choice for conscious consumers.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services">
+        <div class="container">
+            <h2 class="scroll-reveal">Our Services</h2>
+            <div class="services-grid">
+                <div class="service-card scroll-reveal">
+                    <div class="service-icon">🔧</div>
+                    <h3>Custom Manufacturing</h3>
+                    <p>Tailored paper solutions to meet your specific requirements and specifications.</p>
+                </div>
+                <div class="service-card scroll-reveal">
+                    <div class="service-icon">💼</div>
+                    <h3>Bulk Orders</h3>
+                    <p>Competitive pricing for large volume orders with flexible payment terms.</p>
+                </div>
+                <div class="service-card scroll-reveal">
+                    <div class="service-icon">🌱</div>
+                    <h3>Eco-Consulting</h3>
+                    <p>Expert guidance on sustainable paper solutions and environmental practices.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Statistics Section -->
+    <section class="stats">
+        <div class="container">
+            <h2>Our Impact</h2>
+            <div class="stats-grid">
+                <div class="stat-item scroll-reveal">
+                    <h3 class="counter" data-target="500">0</h3>
+                    <p>Tons Daily Production</p>
+                </div>
+                <div class="stat-item scroll-reveal">
+                    <h3 class="counter" data-target="1000">0</h3>
+                    <p>Happy Clients</p>
+                </div>
+                <div class="stat-item scroll-reveal">
+                    <h3 class="counter" data-target="25">0</h3>
+                    <p>Years Experience</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact">
+        <div class="container">
+            <h2 class="scroll-reveal">Contact Us</h2>
+            <div class="contact-content">
+                <div class="contact-form scroll-reveal">
+                    <h3 style="margin-bottom: 1.5rem; color: #333;">Send Us a Message</h3>
+                    <p style="color: #666; margin-bottom: 1.5rem;">Please login to submit inquiries and get AI-powered responses!</p>
+                    <button onclick="openLoginModal()" style="width: 100%; padding: 15px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 15px; font-size: 1.1rem; font-weight: bold; cursor: pointer;">
+                        Login to Contact Us
+                    </button>
+                </div>
+                <div class="contact-info scroll-reveal">
+                    <h3>Get in Touch</h3>
+                    <div class="contact-item">
+                        <div class="contact-icon">📍</div>
+                        <div>
+                            <strong>Address</strong><br>
+                            123 Industrial Avenue, Paper Valley<br>
+                            Manufacturing District, PC 12345
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-icon">📞</div>
+                        <div>
+                            <strong>Phone</strong><br>
+                            8427045053<br>
+                            7654321568
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-icon">✉️</div>
+                        <div>
+                            <strong>Email</strong><br>
+                            info@papercraftindustries.com<br>
+                            vishal27022004@gmail.com
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-icon">🕒</div>
+                        <div>
+                            <strong>Business Hours</strong><br>
+                            Monday - Saturday: 9:00 AM - 6:00 PM<br>
+                            Sunday: 9:00 AM - 2:00 PM
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 Artwork-Enterprise. All rights reserved.</p>
+            <p>ISO 9001 Certified | FSC® Certified | Environmentally Responsible</p>
+        </div>
+    </footer>
+
+    <!-- Scroll to Top Button -->
+    <div class="scroll-top" id="scrollTop">↑</div>
+
+    <!-- Login/Register Modal -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeLoginModal()">&times;</span>
+            <h2 id="modalTitle">Welcome Back!</h2>
+
+            <!-- Guest View -->
+            <div id="guestView">
+                <div class="tabs">
+                    <div class="tab active" onclick="showModalTab('login')">Login</div>
+                    <div class="tab" onclick="showModalTab('register')">Register</div>
+                </div>
+
+                <!-- Login Tab -->
+                <div id="loginTab" class="tab-content active">
+                    <form id="loginForm">
+                        <div class="form-group">
+                            <label>📧 Email</label>
+                            <input type="email" id="loginEmail" required placeholder="your.email@example.com">
+                        </div>
+                        <div class="form-group">
+                            <label>🔒 Password</label>
+                            <input type="password" id="loginPassword" required placeholder="Enter password">
+                        </div>
+                        <button type="submit" class="modal-btn">Login</button>
+                    </form>
+                    <div id="loginMessage" class="message"></div>
+                </div>
+
+                <!-- Register Tab -->
+                <div id="registerTab" class="tab-content">
+                    <form id="registerForm">
+                        <div class="form-group">
+                            <label>👤 Name</label>
+                            <input type="text" id="regName" required placeholder="Full name">
+                        </div>
+                        <div class="form-group">
+                            <label>📧 Email</label>
+                            <input type="email" id="regEmail" required placeholder="your.email@example.com">
+                        </div>
+                        <div class="form-group">
+                            <label>📱 Phone</label>
+                            <input type="tel" id="regPhone" placeholder="+91 98765 43210">
+                        </div>
+                        <div class="form-group">
+                            <label>🔒 Password</label>
+                            <input type="password" id="regPassword" required placeholder="Min 6 characters" minlength="6">
+                        </div>
+                        <div class="form-group">
+                            <label>🔒 Confirm Password</label>
+                            <input type="password" id="regConfirmPassword" required placeholder="Confirm password">
+                        </div>
+                        <button type="submit" class="modal-btn">Register</button>
+                    </form>
+                    <div id="registerMessage" class="message"></div>
+                </div>
+            </div>
+
+            <!-- Logged In View -->
+            <div id="loggedInView" style="display: none;">
+                <div class="tabs">
+                    <div class="tab active" onclick="showLoggedInModalTab('contactTab')">📧 Contact</div>
+                    <div class="tab" onclick="showLoggedInModalTab('inquiriesTab')">📋 Inquiries</div>
+                </div>
+
+                <!-- Contact Tab -->
+                <div id="contactTab" class="tab-content active">
+                    <form id="contactForm">
+                        <div class="form-group">
+                            <label>📌 Subject</label>
+                            <select id="subject" required>
+                                <option value="">Select subject</option>
+                                <option value="product-inquiry">Product Inquiry</option>
+                                <option value="bulk-order">Bulk Order</option>
+                                <option value="custom-manufacturing">Custom Manufacturing</option>
+                                <option value="partnership">Partnership</option>
+                                <option value="support">Support</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>✍️ Message</label>
+                            <textarea id="messageText" required placeholder="How can we help?"></textarea>
+                        </div>
+                        <button type="submit" class="modal-btn">📤 Send</button>
+                    </form>
+                    <div id="contactMessage" class="message"></div>
+                </div>
+
+                <!-- Inquiries Tab -->
+                <div id="inquiriesTab" class="tab-content">
+                    <div id="inquiryList"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentUser = null;
+        let users = [];
+        let inquiries = [];
+
+        // Load data
+        function loadData() {
+            try {
+                const storedUsers = localStorage.getItem('artwork_users');
+                const storedInquiries = localStorage.getItem('artwork_inquiries');
+                const storedCurrentUser = localStorage.getItem('artwork_currentUser');
+
+                if (storedUsers) users = JSON.parse(storedUsers);
+                if (storedInquiries) inquiries = JSON.parse(storedInquiries);
+                if (storedCurrentUser) {
+                    currentUser = JSON.parse(storedCurrentUser);
+                    updateNavForLoggedIn();
+                }
+            } catch (error) {
+                console.error('Error loading data:', error);
+            }
+        }
+
+        // Save data
+        function saveData() {
+            try {
+                localStorage.setItem('artwork_users', JSON.stringify(users));
+                localStorage.setItem('artwork_inquiries', JSON.stringify(inquiries));
+                if (currentUser) {
+                    localStorage.setItem('artwork_currentUser', JSON.stringify(currentUser));
+                } else {
+                    localStorage.removeItem('artwork_currentUser');
+                }
+            } catch (error) {
+                console.error('Error saving data:', error);
+            }
+        }
+
+        // Open login modal
+        function openLoginModal() {
+            if (currentUser) {
+                document.getElementById('guestView').style.display = 'none';
+                document.getElementById('loggedInView').style.display = 'block';
+                document.getElementById('modalTitle').textContent = `Welcome, ${currentUser.name}!`;
+            } else {
+                document.getElementById('guestView').style.display = 'block';
+                document.getElementById('loggedInView').style.display = 'none';
+                document.getElementById('modalTitle').textContent = 'Welcome Back!';
+            }
+            document.getElementById('loginModal').classList.add('show');
+        }
+
+        // Close login modal
+        function closeLoginModal() {
+            document.getElementById('loginModal').classList.remove('show');
+        }
+
+        // Show modal tabs (guest)
+        function showModalTab(tabName) {
+            document.querySelectorAll('#guestView .tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('#guestView .tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            event.target.classList.add('active');
+            document.getElementById(tabName + 'Tab').classList.add('active');
+        }
+
+        // Show modal tabs (logged in)
+        function showLoggedInModalTab(tabName) {
+            document.querySelectorAll('#loggedInView .tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('#loggedInView .tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            event.target.classList.add('active');
+            document.getElementById(tabName).classList.add('active');
+
+            if (tabName === 'inquiriesTab') {
+                loadInquiries();
+            }
+        }
+
+        // Show message
+        function showMessage(elementId, message, type) {
+            const messageEl = document.getElementById(elementId);
+            messageEl.textContent = message;
+            messageEl.className = `message ${type} show`;
+            setTimeout(() => {
+                messageEl.classList.remove('show');
+            }, 5000);
+        }
+
+        // Update nav for logged in user
+        function updateNavForLoggedIn() {
+            const loginNavItem = document.getElementById('loginNavItem');
+            loginNavItem.innerHTML = `
+                <div class="user-badge">
+                    <span class="user-name">${currentUser.name}</span>
+                    <button class="logout-btn-small" onclick="logout()">Logout</button>
+                </div>
+            `;
+        }
+
+        // Register form
+        document.getElementById('registerForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const name = document.getElementById('regName').value.trim();
+            const email = document.getElementById('regEmail').value.trim().toLowerCase();
+            const phone = document.getElementById('regPhone').value.trim();
+            const password = document.getElementById('regPassword').value;
+            const confirmPassword = document.getElementById('regConfirmPassword').value;
+
+            if (password !== confirmPassword) {
+                showMessage('registerMessage', '❌ Passwords do not match!', 'error');
+                return;
+            }
+
+            if (password.length < 6) {
+                showMessage('registerMessage', '❌ Password must be at least 6 characters!', 'error');
+                return;
+            }
+
+            if (users.some(u => u.email === email)) {
+                showMessage('registerMessage', '❌ Email already registered!', 'error');
+                return;
+            }
+
+            const newUser = {
+                id: Date.now(),
+                name,
+                email,
+                phone: phone || 'Not provided',
+                password,
+                createdAt: new Date().toISOString()
+            };
+
+            users.push(newUser);
+            saveData();
+
+            showMessage('registerMessage', '✅ Registration successful! Please login.', 'success');
+            
+            setTimeout(() => {
+                document.getElementById('registerForm').reset();
+                document.querySelectorAll('#guestView .tab')[0].click();
+            }, 2000);
+        });
+
+        // Login form
+        document.getElementById('loginForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const email = document.getElementById('loginEmail').value.trim().toLowerCase();
+            const password = document.getElementById('loginPassword').value;
+
+            const user = users.find(u => u.email === email && u.password === password);
+
+            if (user) {
+                currentUser = user;
+                saveData();
+                showMessage('loginMessage', '✅ Login successful!', 'success');
+                
+                setTimeout(() => {
+                    document.getElementById('loginForm').reset();
+                    updateNavForLoggedIn();
+                    openLoginModal();
+                }, 1000);
+            } else {
+                showMessage('loginMessage', '❌ Invalid email or password!', 'error');
+            }
+        });
+
+        // Logout
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                currentUser = null;
+                saveData();
+                location.reload();
+            }
+        }
+
+        // Contact form
+        document.getElementById('contactForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const subject = document.getElementById('subject').value;
+            const message = document.getElementById('messageText').value;
+            const submitBtn = e.target.querySelector('button');
+
+            submitBtn.disabled = true;
+            submitBtn.textContent = '⏳ Sending...';
+
+            try {
+                const response = await fetch('https://api.anthropic.com/v1/messages', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        model: 'claude-sonnet-4-20250514',
+                        max_tokens: 1000,
+                        messages: [{
+                            role: 'user',
+                            content: `You are a customer service representative for Artwork-Enterprise, a paper manufacturing company. A customer has submitted:
+
+Name: ${currentUser.name}
+Email: ${currentUser.email}
+Phone: ${currentUser.phone}
+Subject: ${subject}
+Message: ${message}
+
+Provide a professional, helpful response with specific next steps.`
+                        }]
+                    })
+                });
+
+                const data = await response.json();
+                const aiResponse = data.content && data.content[0] ? data.content[0].text : 'Thank you! We will respond within 24 hours.';
+
+                const newInquiry = {
+                    id: Date.now(),
+                    userId: currentUser.id,
+                    subject,
+                    message,
+                    response: aiResponse,
+                    date: new Date().toISOString()
+                };
+
+                inquiries.push(newInquiry);
+                saveData();
+
+                showMessage('contactMessage', `✅ Message sent!\n\n${aiResponse}`, 'success');
+                document.getElementById('contactForm').reset();
+
+            } catch (error) {
+                const fallbackResponse = 'Thank you for contacting Artwork-Enterprise! We will respond within 24 hours. Call 8427045053 for urgent inquiries.';
+                
+                const newInquiry = {
+                    id: Date.now(),
+                    userId: currentUser.id,
+                    subject,
+                    message,
+                    response: fallbackResponse,
+                    date: new Date().toISOString()
+                };
+
+                inquiries.push(newInquiry);
+                saveData();
+
+                showMessage('contactMessage', `✅ ${fallbackResponse}`, 'success');
+                document.getElementById('contactForm').reset();
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = '📤 Send';
+            }
+        });
+
+        // Load inquiries
+        function loadInquiries() {
+            const inquiryList = document.getElementById('inquiryList');
+            const userInquiries = inquiries.filter(inq => inq.userId === currentUser.id);
+
+            if (userInquiries.length === 0) {
+                inquiryList.innerHTML = '<p style="text-align: center; color: #999; padding: 2rem;">No inquiries yet.</p>';
+                return;
+            }
+
+            inquiryList.innerHTML = userInquiries.map(inq => `
+                <div style="background: #f8f9fa; padding: 1rem; border-radius: 10px; margin-bottom: 1rem; border-left: 4px solid #667eea;">
+                    <h4 style="color: #667eea; margin-bottom: 0.5rem;">${inq.subject.replace(/-/g, ' ').toUpperCase()}</h4>
+                    <p style="color: #999; font-size: 0.85rem; margin-bottom: 0.5rem;">📅 ${new Date(inq.date).toLocaleString()}</p>
+                    <p style="color: #555; font-size: 0.9rem; margin-bottom: 0.5rem;"><strong>Message:</strong> ${inq.message}</p>
+                    <p style="color: #555; font-size: 0.9rem;"><strong>Response:</strong> ${inq.response}</p>
+                </div>
+            `).reverse().join('');
+        }
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Scroll reveal animation
+        const revealElements = document.querySelectorAll('.scroll-reveal');
+        
+        const revealOnScroll = () => {
+            revealElements.forEach(element => {
+                const elementTop = element.getBoundingClientRect().top;
+                const elementVisible = 150;
+                
+                if (elementTop < window.innerHeight - elementVisible) {
+                    element.classList.add('active');
+                }
+            });
+        };
+
+        window.addEventListener('scroll', revealOnScroll);
+        revealOnScroll();
+
+        // Counter animation
+        const counters = document.querySelectorAll('.counter');
+        let counterAnimated = false;
+
+        const animateCounters = () => {
+            const statsSection = document.querySelector('.stats');
+            if (!statsSection) return;
+            
+            const statsSectionTop = statsSection.getBoundingClientRect().top;
+            
+            if (statsSectionTop < window.innerHeight && !counterAnimated) {
+                counterAnimated = true;
+                
+                counters.forEach(counter => {
+                    const target = parseInt(counter.getAttribute('data-target'));
+                    const duration = 2000;
+                    const increment = target / (duration / 16);
+                    let current = 0;
+                    
+                    const updateCounter = () => {
+                        current += increment;
+                        if (current < target) {
+                            counter.textContent = Math.floor(current) + '+';
+                            requestAnimationFrame(updateCounter);
+                        } else {
+                            counter.textContent = target + '+';
+                        }
+                    };
+                    
+                    updateCounter();
+                });
+            }
+        };
+
+        window.addEventListener('scroll', animateCounters);
+
+        // Navigation scroll effect
+        const nav = document.querySelector('nav');
+        window.addEventListener('scroll', function() {
+            if (window.scrollY > 100) {
+                nav.classList.add('scrolled');
+            } else {
+                nav.classList.remove('scrolled');
+            }
+        });
+
+        // Scroll to top button
+        const scrollTopBtn = document.getElementById('scrollTop');
+        
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 500) {
+                scrollTopBtn.classList.add('visible');
+            } else {
+                scrollTopBtn.classList.remove('visible');
+            }
+        });
+
+        scrollTopBtn.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+
+        // Add parallax effect to hero section
+        window.addEventListener('scroll', () => {
+            const hero = document.querySelector('.hero');
+            const scrolled = window.scrollY;
+            hero.style.transform = `translateY(${scrolled * 0.5}px)`;
+        });
+
+        // Add hover effect to product cards
+        const productCards = document.querySelectorAll('.product-card');
+        productCards.forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.zIndex = '10';
+            });
+            card.addEventListener('mouseleave', function() {
+                this.style.zIndex = '1';
+            });
+        });
+
+        // Close modal on outside click
+        window.addEventListener('click', function(event) {
+            const modal = document.getElementById('loginModal');
+            if (event.target === modal) {
+                closeLoginModal();
+            }
+        });
+
+        // Initialize animations on page load
+        window.addEventListener('load', () => {
+            document.body.style.opacity = '1';
+        });
+
+        // Initialize
+        loadData();
+    </script>
+</body>
+</html>
